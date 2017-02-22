@@ -1,0 +1,39 @@
+<h2>Welcome, <%= @user.first_name %>!</h1>
+<a href="/logout">Logout</a><p></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Total Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @clients.each do |client| %>
+      <tr>
+        <td><a href="/clients/<%= client.id %>"><%= client.first_name %> <%= client.last_name %></a></td>
+        <td><%= client.email %></td>
+        <td><%= client.sales.sum(:prod_price) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br><br>
+<h4>Add New Client</h4>
+<%= form_for @client do |f| %>
+  <div>
+    <%= f.label :first_name %>
+    <%= f.text_field :first_name %>
+  </div><br>
+  <div>
+    <%= f.label :last_name %>
+    <%= f.text_field :last_name %>
+  </div><br>
+  <div>
+    <%= f.label :email %>
+    <%= f.text_field :email %>
+  </div><br>
+  <%= f.submit "Add" %>
+<% end %>

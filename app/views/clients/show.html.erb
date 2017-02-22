@@ -1,0 +1,54 @@
+<% if flash[:success] %>
+  <p><%= flash[:success] %></p>
+<% end %>
+
+<h1><%= @client.first_name %> <%= @client.last_name %></h1>
+<a href="/clients">All Clients</a>
+
+<h3>All Sales</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Size</th>
+      <th>Price</th>
+      <th>Sale Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sales.each do |sale| %>
+      <tr>
+        <td><%= sale.prod_name %></td>
+        <td><%= sale.prod_size %></td>
+        <td><%= sale.prod_price %></td>
+        <td><%= sale.created_at %></td>
+        <td>
+          <a href="/sales/<%= sale.id %>/edit">Edit</a>
+          <a href="/sales/<%= sale.id %>" data-method="delete">Delete</a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h3>Add Sale</h3>
+<% if flash[:error] %>
+  <p><%= flash[:error] %></p>
+<% end %>
+<%= form_for @sale do |f| %>
+  <%= f.hidden_field :client_id, value: @client.id %>
+  <div>
+    <%= f.label "Name" %>
+    <%= f.text_field :prod_name %>
+  </div><br>
+  <div>
+    <%= f.label "Size" %>
+    <%= f.text_field :prod_size %>
+  </div><br>
+  <div>
+    <%= f.label "Price" %>
+    <%= f.number_field :prod_price, step: 0.01 %>
+  </div><br>
+  <%= f.submit "Add Sale" %>
+<% end %>
