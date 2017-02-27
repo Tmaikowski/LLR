@@ -4,5 +4,5 @@ class User < ApplicationRecord
   has_many :products
   has_many :sales
   has_many :invoices
-  belongs_to :team
+  belongs_to :team, optional: true
 end
