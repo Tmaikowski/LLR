@@ -2,7 +2,8 @@
   <p><%= flash[:success] %></p>
 <% end %>
 
-<h1><%= @client.first_name %> <%= @client.last_name %></h1>
+<h1><%= @client.first_name %> <%= @client.last_name %> - Reward Status: <%= @client.loyalty_level %></h1>
+<p>Total Sales: <%= @client.sales.sum(:sale_price) %> || Total Points: <%= @client.points %></p>
 <a href="/clients">All Clients</a>
 
 <h3>All Sales</h3>
@@ -11,20 +12,21 @@
     <tr>
       <th>Name</th>
       <th>Size</th>
-      <th>Price</th>
       <th>Sale Date</th>
+      <th>Sale Price</th>
+      <th>Status</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% @sales.each do |sale| %>
       <tr>
-        <td><%= sale.prod_name %></td>
-        <td><%= sale.prod_size %></td>
-        <td><%= sale.prod_price %></td>
+        <td><%= sale.product.prod_name %></td>
+        <td><%= sale.product.prod_size %></td>
         <td><%= sale.created_at %></td>
+        <td><%= sale.sale_price %></td>
+        <td><%= sale.sales_code.status %></td>
         <td>
-          <a href="/sales/<%= sale.id %>/edit">Edit</a>
           <a href="/sales/<%= sale.id %>" data-method="delete">Delete</a>
         </td>
       </tr>
@@ -33,22 +35,28 @@
 </table>
 
 <h3>Add Sale</h3>
-<% if flash[:error] %>
-  <p><%= flash[:error] %></p>
-<% end %>
-<%= form_for @sale do |f| %>
-  <%= f.hidden_field :client_id, value: @client.id %>
-  <div>
-    <%= f.label "Name" %>
-    <%= f.text_field :prod_name %>
-  </div><br>
-  <div>
-    <%= f.label "Size" %>
-    <%= f.text_field :prod_size %>
-  </div><br>
-  <div>
-    <%= f.label "Price" %>
-    <%= f.number_field :prod_price, step: 0.01 %>
-  </div><br>
+<%= form_for @sale, url: { controller: "sales", action: "create" } do |f| %>
+  <%= f.hidden_field :client, value: @sale.client.id %>
+  <%= collection_select(:product, :id, Product.all.where(user: User.find(session[:user_id])), :id, :prod_desc) %>
+  <%= f.label "Sale Price" %>
+  <%= f.number_field :sale_price, step: 0.01 %>
   <%= f.submit "Add Sale" %>
+<% end %>
+
+<h3>Change Reward Status</h3>
+<%= form_for @client, url: { controller: 'clients', action: 'update_loyalty_level' } do |f| %>
+  <%= f.hidden_field :client_id, value: @client.id %>
+  <%= f.label "Reward Status" %>
+  <%= f.select(:loyalty_level, [['Bronze', 1], ['Silver', 2], ['Gold', 3], ['Platinum', 4]]) %>
+  <%= f.submit "Update" %>
+<% end %>
+
+<%= form_for @client, url: { controller: 'clients', action: 'add_points' } do |f| %>
+  <%= f.hidden_field :client_id, value: @client.id %>
+  <%= f.label "Reward Points" %>
+  <%= f.select(:points, [
+    [1000], [2000], [3000], [4000], [5000], [6000], [7000],
+    [8000], [9000], [10000], [11000], [12000], [13000], [14000], [15000]
+  ]) %>
+  <%= f.submit "Add" %>
 <% end %>

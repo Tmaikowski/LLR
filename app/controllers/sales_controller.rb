@@ -1,23 +1,18 @@
 class SalesController < ApplicationController
   def create
-    sale = Sale.new(sale_params)
+    sale = Sale.new(
+      user: User.find(session[:user_id]),
+      client: Client.find(params[:sale][:client]),
+      product: Product.find(params[:product][:id]),
+      sales_code: SalesCode.first,
+      sale_price: params[:sale][:sale_price]
+    )
     if sale.save
       flash[:success] = "Sale created!"
     else
       flash[:error] = "Something went wrong"
     end
     redirect_to controller: "clients", action: "show", id: sale.client_id
-  end
-
-  def edit
-    @sale = Sale.find(params[:id])
-  end
-
-  def update
-    @sale = Sale.find(params[:id])
-    @sale.update(sale_params)
-    flash[:success] = "Sale updated!"
-    redirect_to controller: "clients", action: "show", id: @sale.client_id
   end
 
   def destroy
@@ -30,10 +25,8 @@ class SalesController < ApplicationController
 
   def sale_params
     params.require(:sale).permit(
-      :prod_name,
-      :prod_size,
-      :prod_price,
-      :client_id
+      :client,
+      :product
     )
   end
 end

@@ -1,17 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  prod_line: MyString
-  prod_name: MyString
-  prod_color: MyString
-  prod_size: MyString
-  prod_price: 9.99
+  user: one
   client: one
+  product: one
 
 two:
-  prod_line: MyString
-  prod_name: MyString
-  prod_color: MyString
-  prod_size: MyString
-  prod_price: 9.99
+  user: two
   client: two
+  product: two

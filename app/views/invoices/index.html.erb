@@ -1,0 +1,39 @@
+<% if flash[:notice] %>
+  <p><%= flash[:notice] %></p>
+<% end %>
+
+<h1>My Invoices</h1>
+<a href="/clients">Back</a><br><br>
+<%= form_for :invoice, url: { controller: "invoices", action: "new" }, method: :get do |f| %>
+  <%= f.label "Client" %>
+  <%= collection_select(:client, :id, @clients, :id, :full_name) %>
+  <%= f.submit "Create Invoice" %>
+<% end %>
+<br><br>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Client Name</th>
+      <th>Created At</th>
+      <th>Total</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @invoices.each do |invoice| %>
+      <tr>
+        <td><%= invoice.id %></td>
+        <td><%= invoice.client.first_name %> <%= invoice.client.last_name %></td>
+        <td><%= invoice.created_at %></td>
+        <td><%= invoice.sales.sum(:sale_price) %></td>
+        <td>
+          <a href="/invoices/<%= invoice.id %>">Show</a>
+          <a href="/invoices/<%= invoice.id %>/edit">Edit</a>
+          <a href="/invoices/<%= invoice.id %>" data-method="delete">Delete</a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
