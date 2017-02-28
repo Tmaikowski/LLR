@@ -18,4 +18,5 @@ Rails.application.routes.draw do
   post '/add_member' => 'teams#add_member'
 
   resources :invoices
+  post '/send_invoice_to_client' => "invoices#send_invoice_to_client"
 end

@@ -25,7 +25,8 @@ class InvoicesController < ApplicationController
 
       invoice = Invoice.new(
         user: User.find(session[:user_id]),
-        client: Client.find(params[:client][:id])
+        client: Client.find(params[:client][:id]),
+        status: "Created"
       )
       invoice.save
 
@@ -64,6 +65,26 @@ class InvoicesController < ApplicationController
   end
 
   def update
+  end
+
+  def send_invoice_to_client
+    #look into sendmail configuration and authentication, DKIM?
+    #marketing needs to sent from an entirely different server.
+    #google
+    user = User.find(session[:user_id])
+    client = Client.find(params[:invoices][:client_id])
+    invoice = Invoice.find(params[:invoices][:invoice_id])
+    Pony.mail(
+      to: client.email,
+      from: "troy9916@gmail.com",
+      subject: "LLR Invoice from #{user.first_name} #{user.last_name}",
+      body: "Thank you for your purchase! Please see the attached invoice for a list of the products you asked for. If you have any questions, please email #{user.email}. Thanks!",
+      attachments: { "#{invoice.invoice_file_name}" => File.read(invoice.invoice.path) },
+      via: :sendmail
+    )
+    invoice.update(status: "Sent")
+    flash[:notice] = "Invoice sent!"
+    redirect_to '/invoices'
   end
 
   private

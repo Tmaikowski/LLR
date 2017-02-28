@@ -38,6 +38,7 @@ gem 'rails_12factor', group: :production
 gem 'hirb'
 gem 'prawn'
 gem 'pdf-reader'
+gem 'pony', '~> 1.11'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

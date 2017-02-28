@@ -18,6 +18,7 @@
       <th>Client Name</th>
       <th>Created At</th>
       <th>Total</th>
+      <th>Status</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -28,10 +29,18 @@
         <td><%= invoice.client.first_name %> <%= invoice.client.last_name %></td>
         <td><%= invoice.created_at %></td>
         <td><%= invoice.sales.sum(:sale_price) %></td>
+        <td><%= invoice.status %></td>
         <td>
           <a href="/invoices/<%= invoice.id %>">Show</a>
           <a href="/invoices/<%= invoice.id %>/edit">Edit</a>
           <a href="/invoices/<%= invoice.id %>" data-method="delete">Delete</a>
+        </td>
+        <td>
+          <%= form_for :invoices, url: { controller: "invoices", action: "send_invoice_to_client" } do |f| %>
+            <%= f.hidden_field :client_id, value: invoice.client.id %>
+            <%= f.hidden_field :invoice_id, value: invoice.id %>
+            <%= f.submit "Email Client" %>
+          <% end %>
         </td>
       </tr>
     <% end %>
