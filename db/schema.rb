@@ -26,20 +26,6 @@ ActiveRecord::Schema.define(version: 20170301202702) do
     t.index ["user_id"], name: "index_clients_on_user_id", using: :btree
   end
 
-  create_table "invoices", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "client_id"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.string   "invoice_file_name"
-    t.string   "invoice_content_type"
-    t.integer  "invoice_file_size"
-    t.datetime "invoice_updated_at"
-    t.string   "status"
-    t.index ["client_id"], name: "index_invoices_on_client_id", using: :btree
-    t.index ["user_id"], name: "index_invoices_on_user_id", using: :btree
-  end
-
   create_table "points", force: :cascade do |t|
     t.integer  "amount"
     t.text     "reason"
@@ -50,47 +36,11 @@ ActiveRecord::Schema.define(version: 20170301202702) do
     t.string   "trans_type"
   end
 
-  create_table "products", force: :cascade do |t|
-    t.string   "prod_name"
-    t.string   "prod_size"
-    t.integer  "user_id"
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
-    t.string   "prod_pic_file_name"
-    t.string   "prod_pic_content_type"
-    t.integer  "prod_pic_file_size"
-    t.datetime "prod_pic_updated_at"
-    t.integer  "prod_quantity"
-    t.index ["user_id"], name: "index_products_on_user_id", using: :btree
-  end
-
   create_table "rewards", force: :cascade do |t|
     t.string   "level"
     t.decimal  "multiplier", precision: 5, scale: 2
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
-  end
-
-  create_table "sales", force: :cascade do |t|
-    t.integer  "user_id"
-    t.integer  "client_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.decimal  "sale_price", precision: 10, scale: 2
-    t.index ["client_id"], name: "index_sales_on_client_id", using: :btree
-    t.index ["user_id"], name: "index_sales_on_user_id", using: :btree
-  end
-
-  create_table "sales_codes", force: :cascade do |t|
-    t.string   "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "teams", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -105,9 +55,4 @@ ActiveRecord::Schema.define(version: 20170301202702) do
   end
 
   add_foreign_key "clients", "users"
-  add_foreign_key "invoices", "clients"
-  add_foreign_key "invoices", "users"
-  add_foreign_key "products", "users"
-  add_foreign_key "sales", "clients"
-  add_foreign_key "sales", "users"
 end
