@@ -1,11 +1,7 @@
 <h2>Welcome</h2>
 
 <h3>Register</h3>
-<% if flash[:notice] %>
-  <% flash[:notice].each do |key, val| %>
-    <p><%= key %> <%= val.join(", ") %></p>
-  <% end %>
-<% end %>
+
 <%= form_for @user, url: { action: "create" } do |f| %>
   <div>
     <%= f.label :first_name %>
