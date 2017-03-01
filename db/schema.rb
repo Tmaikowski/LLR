@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170227193040) do
+ActiveRecord::Schema.define(version: 20170301202702) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,11 +19,10 @@ ActiveRecord::Schema.define(version: 20170227193040) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "email"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "user_id"
-    t.integer  "points"
-    t.string   "loyalty_level"
+    t.integer  "reward_id"
     t.index ["user_id"], name: "index_clients_on_user_id", using: :btree
   end
 
@@ -41,6 +40,16 @@ ActiveRecord::Schema.define(version: 20170227193040) do
     t.index ["user_id"], name: "index_invoices_on_user_id", using: :btree
   end
 
+  create_table "points", force: :cascade do |t|
+    t.integer  "amount"
+    t.text     "reason"
+    t.integer  "client_id"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "trans_type"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string   "prod_name"
     t.string   "prod_size"
@@ -55,17 +64,20 @@ ActiveRecord::Schema.define(version: 20170227193040) do
     t.index ["user_id"], name: "index_products_on_user_id", using: :btree
   end
 
+  create_table "rewards", force: :cascade do |t|
+    t.string   "level"
+    t.decimal  "multiplier", precision: 5, scale: 2
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
   create_table "sales", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "client_id"
-    t.integer  "product_id"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.integer  "sales_code_id"
-    t.decimal  "sale_price",    precision: 10, scale: 2
-    t.integer  "invoice_id"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.decimal  "sale_price", precision: 10, scale: 2
     t.index ["client_id"], name: "index_sales_on_client_id", using: :btree
-    t.index ["product_id"], name: "index_sales_on_product_id", using: :btree
     t.index ["user_id"], name: "index_sales_on_user_id", using: :btree
   end
 
@@ -97,6 +109,5 @@ ActiveRecord::Schema.define(version: 20170227193040) do
   add_foreign_key "invoices", "users"
   add_foreign_key "products", "users"
   add_foreign_key "sales", "clients"
-  add_foreign_key "sales", "products"
   add_foreign_key "sales", "users"
 end

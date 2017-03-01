@@ -2,61 +2,53 @@
   <p><%= flash[:success] %></p>
 <% end %>
 
-<h1><%= @client.first_name %> <%= @client.last_name %> - Reward Status: <%= @client.loyalty_level %></h1>
-<p>Total Sales: <%= @client.sales.sum(:sale_price) %> || Total Points: <%= @client.points %></p>
+<h1><%= @client.first_name %> <%= @client.last_name %> - Reward Status: <%= @client.reward.level %></h1>
+<p>Total Points: <%= number_with_delimiter(@client.points.sum(:amount)) %> || Dollar Value: <%= number_to_currency(@client.points.sum(:amount) * @client.reward.multiplier / 100) %></p>
 <a href="/clients">All Clients</a>
 
-<h3>All Sales</h3>
+<h3>All Rewards</h3>
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Size</th>
-      <th>Sale Date</th>
-      <th>Sale Price</th>
-      <th>Status</th>
-      <th>Actions</th>
+      <th>Amount</th>
+      <th>Dollar Value</th>
+      <th>Reason</th>
+      <th>Date Added</th>
     </tr>
   </thead>
   <tbody>
-    <% @sales.each do |sale| %>
+    <% @points.each do |point| %>
       <tr>
-        <td><%= sale.product.prod_name %></td>
-        <td><%= sale.product.prod_size %></td>
-        <td><%= sale.created_at %></td>
-        <td><%= sale.sale_price %></td>
-        <td><%= sale.sales_code.status %></td>
-        <td>
-          <a href="/sales/<%= sale.id %>" data-method="delete">Delete</a>
-        </td>
+        <td><%= number_with_delimiter(point.amount) %></td>
+        <td><%= number_to_currency(point.amount * @client.reward.multiplier / 100) %></td>
+        <td><%= point.reason %></td>
+        <td><%= point.created_at.strftime("%B %-d, %Y, %-I:%M %p") %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<h3>Add Sale</h3>
-<%= form_for @sale, url: { controller: "sales", action: "create" } do |f| %>
-  <%= f.hidden_field :client, value: @sale.client.id %>
-  <%= collection_select(:product, :id, Product.all.where(user: User.find(session[:user_id])), :id, :prod_desc) %>
-  <%= f.label "Sale Price" %>
-  <%= f.number_field :sale_price, step: 0.01 %>
-  <%= f.submit "Add Sale" %>
-<% end %>
-
 <h3>Change Reward Status</h3>
 <%= form_for @client, url: { controller: 'clients', action: 'update_loyalty_level' } do |f| %>
   <%= f.hidden_field :client_id, value: @client.id %>
   <%= f.label "Reward Status" %>
-  <%= f.select(:loyalty_level, [['Bronze', 1], ['Silver', 2], ['Gold', 3], ['Platinum', 4]]) %>
+  <%= f.fields_for :reward do |h| %>
+    <%= h.select(:level, [['Bronze', 1], ['Silver', 2], ['Gold', 3], ['Platinum', 4]]) %>
+  <% end %>
   <%= f.submit "Update" %>
 <% end %>
-
-<%= form_for @client, url: { controller: 'clients', action: 'add_points' } do |f| %>
+<br>
+<h3>Modify Points</h3>
+<%= form_for @point do |f| %>
   <%= f.hidden_field :client_id, value: @client.id %>
-  <%= f.label "Reward Points" %>
-  <%= f.select(:points, [
-    [1000], [2000], [3000], [4000], [5000], [6000], [7000],
+  <%= f.label "Type" %>
+  <%= f.select(:trans_type, [["Award"], ["Redeem"]]) %><br>
+  <%= f.label "Points" %>
+  <%= f.select(:amount, [
+    [100], [500], [1000], [2000], [3000], [4000], [5000], [6000], [7000],
     [8000], [9000], [10000], [11000], [12000], [13000], [14000], [15000]
-  ]) %>
+  ]) %><br>
+  <%= f.label "Award Reason" %><br>
+  <%= f.text_area :reason %><br><br>
   <%= f.submit "Add" %>
 <% end %>

@@ -3,9 +3,6 @@
 <% end %>
 
 <h2>Welcome, <%= @user.first_name %>!</h1>
-<a href="/products">Inventory</a>
-<a href="/teams">Team</a>
-<a href="/invoices">Invoices</a>
 <a href="/logout">Logout</a><p></p>
 
 <table>
@@ -13,10 +10,8 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
-      <th>Uninvoiced Sales</th>
-      <th>Invoiced Sales</th>
-      <th>Completed Sales</th>
-      <th>Total Sales</th>
+      <th>Reward Status</th>
+      <th>Total Points</th>
     </tr>
   </thead>
   <tbody>
@@ -24,10 +19,8 @@
       <tr>
         <td><a href="/clients/<%= client.id %>"><%= client.first_name %> <%= client.last_name %></a></td>
         <td><%= client.email %></td>
-        <td><%= client.sales.where(sales_code_id: 1).sum(:sale_price) %></td>
-        <td><%= client.sales.where(sales_code_id: 2).sum(:sale_price) %></td>
-        <td><%= client.sales.where(sales_code_id: 3).sum(:sale_price) %></td>
-        <td><%= client.sales.sum(:sale_price) %></td>
+        <td><%= client.reward.level %></td>
+        <td><%= number_with_delimiter(client.points.sum(:amount)) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -49,17 +42,4 @@
     <%= f.text_field :email %>
   </div><br>
   <%= f.submit "Add" %>
-<% end %>
-
-<% if @user.team_id %>
-  <p>You are already on a team!</p>
-<% else %>
-  <h3>Create a Team</h3>
-  <%= form_for @team do |f| %>
-    <div>
-      <%= f.label "Team Name" %>
-      <%= f.text_field :name %>
-    </div><br>
-    <%= f.submit "Create" %>
-  <% end %>
 <% end %>

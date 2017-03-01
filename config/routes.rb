@@ -12,11 +12,5 @@ Rails.application.routes.draw do
 
   resources :sales
 
-  resources :products
-
-  resources :teams
-  post '/add_member' => 'teams#add_member'
-
-  resources :invoices
-  post '/send_invoice_to_client' => "invoices#send_invoice_to_client"
+  resources :points
 end
